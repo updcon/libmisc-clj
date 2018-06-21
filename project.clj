@@ -1,4 +1,4 @@
-(defproject com.dkdhub/libmisc-clj "0.0.2"
+(defproject com.dkdhub/libmisc-clj "0.0.3"
   :description "DKD Core Engine"
   :url "http://dkdhub.com"
   :license {:name "Proprietary"
@@ -9,7 +9,7 @@
                  [commons-io "2.6"]
                  [org.postgresql/postgresql "42.2.2"]]
 
-  :omit-source true)
+  :omit-source false)
 
 (cemerick.pomegranate.aether/register-wagon-factory!
   "scp" #(let [c (resolve 'org.apache.maven.wagon.providers.ssh.external.ScpExternalWagon)]
