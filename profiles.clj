@@ -15,7 +15,8 @@
                                                       :username         "clojar"
                                                       :private-key-file :env/clojure_ssh_key}]]
 
-           :dependencies        [[org.clojure/clojure "1.9.0"]]}
+           :dependencies        [[org.clojure/clojure "1.9.0"]
+                                 [org.clojure/tools.namespace "0.2.11"]]}
 
  :uberjar {:aot      :all
            :jvm-opts #=(eval
