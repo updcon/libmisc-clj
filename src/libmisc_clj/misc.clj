@@ -1,5 +1,6 @@
 (ns libmisc-clj.misc
-  (:import (java.nio.charset Charset)))
+  (:import (java.nio.charset Charset)
+           (libmisc_clj.jnio_proto IByteBuffer)))
 
 (defn sym->var [sym]
   (-> sym symbol resolve))
@@ -18,14 +19,29 @@
   ((comp vals select-keys) m ks))
 
 (defn jnio->string
-  ([byte-buffer]
+  ^String
+  ([^IByteBuffer byte-buffer]
    (jnio->string byte-buffer (Charset/defaultCharset)))
-  ([byte-buffer charset]
+  ([^IByteBuffer byte-buffer ^Charset charset]
    (when (not-nil? byte-buffer)
      (.toString (.decode charset byte-buffer)))))
 
 (defn string->jnio
-  ([string]
+  ^IByteBuffer
+  ([^String string]
    (string->jnio string (Charset/defaultCharset)))
-  ([string charset]
+  ([^String string ^Charset charset]
    (.encode charset string)))
+
+(defn filter-hashmap
+  "returns map filtered by a function `func`"
+  [func map]
+  (into {}
+        (filter (fn [[_ v]] (func v)))
+        map))
+
+(defmacro limit-strlen
+  [s max]
+  `(if (string? ~s)
+     (if (< ~max (count ~s)) (subs ~s 0 (- ~max 1)) ~s)
+     ~s))
