@@ -40,7 +40,7 @@
   "Reads a number from a string. Returns nil if not a number."
   [^String s]
   (when-let [v (.trim (or s ""))]
-    (when (not (re-find skip-numeric))
+    (when (not (re-find skip-numeric v))
       (if (or (re-find natural-pattern v)
               (re-find bigdecimal-pattern v)
               (re-find ratio-pattern v))
