@@ -33,14 +33,18 @@
 (def ^{:private true} ratio-pattern
   #"^\d+/\d+$")
 
+(def ^{:private true} skip-numeric
+  #"^0+\d+$")
+
 (defn as-number
   "Reads a number from a string. Returns nil if not a number."
   [^String s]
   (when-let [v (.trim (or s ""))]
-    (if (or (re-find natural-pattern v)
-            (re-find bigdecimal-pattern v)
-            (re-find ratio-pattern v))
-      (read-string s))))
+    (when (not (re-find skip-numeric))
+      (if (or (re-find natural-pattern v)
+              (re-find bigdecimal-pattern v)
+              (re-find ratio-pattern v))
+        (read-string s)))))
 
 (def ^{:private true} uuid-pattern
   #"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
