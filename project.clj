@@ -7,7 +7,7 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [cheshire "5.8.0"]
                  [commons-io "2.6"]
-                 [org.postgresql/postgresql "42.2.2"]]
+                 [org.postgresql/postgresql "42.2.5"]]
 
   :omit-source false)
 
