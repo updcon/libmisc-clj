@@ -1,11 +1,11 @@
-(defproject com.dkdhub/libmisc-clj "0.0.5"
+(defproject com.dkdhub/libmisc-clj "0.0.6"
   :description "DKD Core Engine"
   :url "http://dkdhub.com"
   :license {:name "Proprietary"
-            :url  "https://dkdhub.com/license.html"}
+            :url  "https://dkdhub.com/licenses/base.html"}
 
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [cheshire "5.8.0"]
+                 [cheshire "5.8.1"]
                  [commons-io "2.6"]
                  [org.postgresql/postgresql "42.2.5"]]
 

@@ -2,8 +2,8 @@
   (:import (java.nio.charset Charset)
            (libmisc_clj.jnio_proto IByteBuffer)))
 
-(defn sym->var [sym]
-  (-> sym symbol resolve))
+(defn sym->var [val]
+  (-> val symbol resolve))
 
 (def not-nil? (complement nil?))
 
@@ -35,13 +35,23 @@
 
 (defn filter-hashmap
   "returns map filtered by a function `func`"
-  [func map]
+  [func amap]
   (into {}
         (filter (fn [[_ v]] (func v)))
-        map))
+        amap))
 
 (defmacro limit-strlen
   [s max]
   `(if (string? ~s)
      (if (< ~max (count ~s)) (subs ~s 0 (- ~max 1)) ~s)
      ~s))
+
+(defn multi-merge
+  "Merges maps recursively"
+  ([maps] (multi-merge {} maps))
+  ([{:keys [collect?]
+    :or   {collect? false}
+    :as   opts} maps]
+  (if (every? (some-fn map? nil?) maps)
+    (apply merge-with #(multi-merge opts %&) maps)
+    (if collect? (vec maps) (last maps)))))
