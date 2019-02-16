@@ -1,4 +1,5 @@
-(ns libmisc-clj.jnio-proto)
+(ns libmisc-clj.jnio-proto
+  (:gen-class))
 
 (defprotocol IBuffer
   (make-buffer [x])

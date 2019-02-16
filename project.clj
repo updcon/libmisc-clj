@@ -8,7 +8,8 @@
                  [commons-io "2.6"]
                  [org.postgresql/postgresql "42.2.5"]]
 
-  :omit-source false)
+  :omit-source false
+  :aot [libmisc-clj.jnio-proto])
 
 (cemerick.pomegranate.aether/register-wagon-factory!
   "scp" #(let [c (resolve 'org.apache.maven.wagon.providers.ssh.external.ScpExternalWagon)]
