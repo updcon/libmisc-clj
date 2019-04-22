@@ -1,4 +1,4 @@
-(defproject com.dkdhub/libmisc-clj "0.0.7"
+(defproject com.dkdhub/libmisc-clj "0.0.8"
   :description "DKD Core Engine"
   :url "http://dkdhub.com"
   :license {:name "Proprietary"
@@ -6,6 +6,7 @@
 
   :dependencies [[cheshire "5.8.1"]
                  [commons-io "2.6"]
+                 [com.eaio.uuid/uuid "3.2"]
                  [org.postgresql/postgresql "42.2.5"]]
 
   :omit-source false

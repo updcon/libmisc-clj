@@ -1,19 +1,22 @@
-{:dev {:global-vars         {*warn-on-reflection* true}
+{:dev      {:global-vars         {*warn-on-reflection* true}
 
-       :source-paths        #{"src"}
-       :resource-paths      ["resources"]
+            :plugins             [[org.apache.maven.wagon/wagon-ssh-external "3.3.2"]
+                                  [org.apache.maven.wagon/wagon-http-lightweight "3.3.2"]]
 
-       :target-path         "target/%s"
-       :clean-targets       ^{:protect false} [:target-path]
+            :plugin-repositories [["private-jars" "http://local.repo:9180/repo"]]
+            :deploy-repositories [["private-jars-scp" {:url              "scp://local.repo/home/clojar/data/dev_repo/"
+                                                       :username         "clojar"
+                                                       :private-key-file :env/clojure_ssh_key}]]
 
-       :plugins             [[org.apache.maven.wagon/wagon-ssh-external "3.3.2"]
-                             [org.apache.maven.wagon/wagon-http-lightweight "3.3.2"]]
+            :dependencies        [[org.clojure/clojure "1.10.0"]
+                                  [org.clojure/tools.namespace "0.2.11"]]}
+ :provided {
+            :source-paths      #{"src-clj"}
+            :resource-paths    ["resources"]
 
-       :plugin-repositories [["private-jars" "http://10.10.3.4:9180/repo"]]
-       :deploy-repositories [["private-jars-scp" {:url              "scp://10.10.3.4/home/clojar/data/dev_repo/"
-                                                  :username         "clojar"
-                                                  :private-key-file :env/clojure_ssh_key}]]
+            :java-source-paths #{"src-java"}
+            :javac-options     ["-source" "1.8" "-target" "1.8" "-g:none"]
 
-       :dependencies        [[org.clojure/clojure "1.10.0"]
-                             [org.clojure/tools.namespace "0.2.11"]]}}
+            :clean-targets     ^{:protect false} [:target-path]
+            }}
 
