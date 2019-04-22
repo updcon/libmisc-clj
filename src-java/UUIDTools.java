@@ -1,7 +1,6 @@
 package libmisc_clj;
 
 import com.eaio.uuid.UUIDGen;
-
 import java.util.UUID;
 
 public class UUIDTools {
