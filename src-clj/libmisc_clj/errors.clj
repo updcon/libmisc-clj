@@ -4,7 +4,8 @@
   (:import (java.util NoSuchElementException)
            (org.postgresql.util PSQLException)
            (javax.naming LimitExceededException)
-           (clojure.lang ExceptionInfo)))
+           (clojure.lang ExceptionInfo)
+           (java.util.concurrent TimeoutException Future)))
 
 (defmacro ^{:private true} pack-error->json
   [msg T code]
@@ -55,3 +56,41 @@
                 vh/http-jerror-locked)))
           (catch UnsupportedOperationException _ vh/http-jerror-quota-reached)
           (catch LimitExceededException _ vh/http-jerror-limit-exceeded)))))
+
+(defmacro ignore-exceptions
+  "Simple macro which wraps the given expression in a try/catch block and ignores the exception if caught."
+  [& body]
+  `(try ~@body (catch Throwable ~'_)))
+
+(defn do-with-auto-retries*
+  "Execute F, a function that takes no arguments, and return the results.
+   If F fails with an exception, retry F up to NUM-RETRIES times until it succeeds."
+  [num-retries f]
+  (if (<= num-retries 0)
+    (f)
+    (try (f)
+         (catch Throwable e
+           (do-with-auto-retries* (dec num-retries) f)))))
+
+(defmacro auto-retry
+  "Execute BODY and return the results.
+   If BODY fails with an exception, retry execution up to NUM-RETRIES times until it succeeds."
+  [num-retries & body]
+  `(do-with-auto-retries* ~num-retries
+                          (fn [] ~@body)))
+
+(defn deref-with-timeout
+  "Call `deref` on a something derefable (e.g. a future or promise), and throw an exception if it takes more than
+  `timeout-ms`. If `ref` is a future it will attempt to cancel it as well."
+  [reff timeout-ms]
+  (let [result (deref reff timeout-ms ::timeout)]
+    (when (= result ::timeout)
+      (when (instance? Future reff)
+        (future-cancel reff))
+      (throw (TimeoutException. (format "Timed out after %d milliseconds." timeout-ms))))
+    result))
+
+(defmacro with-timeout
+  "Run BODY in a `future` and throw an exception if it fails to complete after TIMEOUT-MS."
+  [timeout-ms & body]
+  `(deref-with-timeout (future ~@body) ~timeout-ms))

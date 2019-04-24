@@ -49,3 +49,21 @@
   (->>
     (drop-while first-char58? value)
     (pipeline 58 256 inverted-alphabet58 char first-char58? "\000")))
+
+(comment
+  (defn base64-string?
+    "Is `s` a Base-64 encoded string?"
+    ^Boolean [s]
+    (boolean (when (string? s)
+               (re-find #"^[0-9A-Za-z/+]+=*$" s))))
+
+  (defn decode-base64
+    "Decodes a Base64 string to a UTF-8 string"
+    [input]
+    (new java.lang.String (javax.xml.bind.DatatypeConverter/parseBase64Binary input) "UTF-8"))
+
+  (defn encode-base64
+    "Encodes a string to a Base64 string"
+    [^String input]
+    (javax.xml.bind.DatatypeConverter/printBase64Binary (.getBytes input "UTF-8")))
+  )
