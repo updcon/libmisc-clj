@@ -1,5 +1,5 @@
-{:dev      {:plugins             [[org.apache.maven.wagon/wagon-ssh-external "3.3.4"]
-                                  [org.apache.maven.wagon/wagon-http-lightweight "3.3.4"]]
+{:dev      {:plugins             [[org.apache.maven.wagon/wagon-ssh-external "3.4.0"]
+                                  [org.apache.maven.wagon/wagon-http-lightweight "3.4.0"]]
 
             :plugin-repositories [["private-jars" "http://local.repo:9180/repo"]]
             :deploy-repositories [["private-jars-scp" {:url              "scp://local.repo/home/clojar/data/dev_repo/"
@@ -7,7 +7,7 @@
                                                        :private-key-file :env/clojure_ssh_key}]]
 
             :dependencies        [[org.clojure/clojure "1.10.1"]
-                                  [org.clojure/tools.namespace "0.3.1"]]}
+                                  [org.clojure/tools.namespace "1.0.0"]]}
  :provided {:global-vars       {*warn-on-reflection* true}
             :jar-exclusions    [#"\.java"]
 

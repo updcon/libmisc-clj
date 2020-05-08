@@ -1,14 +1,14 @@
-(defproject com.dkdhub/libmisc-clj "0.1.0"
+(defproject com.dkdhub/libmisc-clj "0.1.1"
   :description "DKD Core Engine"
   :url "http://dkdhub.com"
   :license {:name "Proprietary"
             :url  "https://dkdhub.com/licenses/base.html"}
 
-  :dependencies [[cheshire "5.9.0"]
+  :dependencies [[cheshire "5.10.0"]
                  [commons-io "2.6"]
                  [clj-time "0.15.2"]
                  [com.eaio.uuid/uuid "3.2"]
-                 [org.postgresql/postgresql "42.2.9"]]
+                 [org.postgresql/postgresql "42.2.12"]]
 
   :omit-source false
   :aot [libmisc-clj.jnio-proto])
