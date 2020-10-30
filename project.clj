@@ -1,4 +1,4 @@
-(defproject com.dkdhub/libmisc-clj "0.1.1"
+(defproject com.dkdhub/libmisc-clj "0.1.2"
   :description "DKD Core Engine"
   :url "http://dkdhub.com"
   :license {:name "Proprietary"
