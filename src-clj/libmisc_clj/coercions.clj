@@ -8,7 +8,7 @@
   (if
     (Boolean/parseBoolean (or s ""))
     true
-    (if (= 0 (.compareToIgnoreCase s "false")) false nil)))
+    (if (= 0 (.compareToIgnoreCase (or s "") "false")) false nil)))
 
 (defn as-double
   "Parse a string into a double, or `nil` if the string cannot be parsed."
