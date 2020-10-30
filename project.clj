@@ -5,10 +5,10 @@
             :url  "https://dkdhub.com/licenses/base.html"}
 
   :dependencies [[cheshire "5.10.0"]
-                 [commons-io "2.6"]
+                 [commons-io "2.8.0"]
                  [clj-time "0.15.2"]
                  [com.eaio.uuid/uuid "3.2"]
-                 [org.postgresql/postgresql "42.2.12"]]
+                 [org.postgresql/postgresql "42.2.18"]]
 
   :omit-source false
   :aot [libmisc-clj.jnio-proto])
