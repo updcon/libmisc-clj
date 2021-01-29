@@ -65,14 +65,16 @@
 (defn paginated-list [alist]
   {:total (-> alist first :total (or 0)) :items alist})
 
-(defn downloaded-file [name body]
-  (let [name (URLEncoder/encode (str name) "UTF-8")
-        file (str "attachment; filename=" name)
-        content "application/octet-stream"]
-    {:status  200
-     :headers {"Content-Type"        content
-               "Content-Disposition" file}
-     :body    body}))
+(defn downloaded-file
+  ([name body] (downloaded-file name body nil))
+  ([name body c-type]
+   (let [name (URLEncoder/encode (str name) "UTF-8")
+         file (str "attachment; filename=" name)
+         content (or c-type "application/octet-stream")]
+     {:status  200
+      :headers {"Content-Type"        content
+                "Content-Disposition" file}
+      :body    body})))
 
 (defn byte-array-store
   "Returns a function that stores multipart file parameters as an array of
