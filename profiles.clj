@@ -5,7 +5,7 @@
             :deploy-repositories [["private-jars-scp" {:url              "scp://local.repo/home/clojar/data/dev_repo/"
                                                        :username         "clojar"
                                                        :private-key-file :env/clojure_ssh_key}]]}
- :provided {:dependencies      [[org.clojure/clojure "1.10.1"]
+ :provided {:dependencies      [[org.clojure/clojure "1.10.2"]
                                 [org.clojure/tools.namespace "1.1.0"]]
             :global-vars       {*warn-on-reflection* true}
             :jar-exclusions    [#"\.java"]
