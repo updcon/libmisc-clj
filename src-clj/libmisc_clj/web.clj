@@ -2,7 +2,8 @@
   (:require [libmisc-clj.misc :as hc]
             [libmisc-clj.coercions :refer :all])
   (:import (org.apache.commons.io IOUtils)
-           (java.io InputStream)))
+           (java.io InputStream)
+           (java.net URLEncoder)))
 
 (defn- reconstruct-single [v]
   (cond
@@ -65,10 +66,13 @@
   {:total (-> alist first :total (or 0)) :items alist})
 
 (defn downloaded-file [name body]
-  {:status  200
-   :headers {"Content-Type"        "application/octet-stream"
-             "Content-Disposition" (str "attachment; filename=" name)}
-   :body    body})
+  (let [name (URLEncoder/encode (str name) "UTF-8")
+        file (str "attachment; filename=" name)
+        content "application/octet-stream"]
+    {:status  200
+     :headers {"Content-Type"        content
+               "Content-Disposition" file}
+     :body    body}))
 
 (defn byte-array-store
   "Returns a function that stores multipart file parameters as an array of
