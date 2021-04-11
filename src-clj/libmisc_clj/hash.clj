@@ -34,3 +34,14 @@
   (flatten (map -normalize (-flatten-map m))))
 
 (defn flatten-map [m] (apply assoc {} (flatten-map* m)))
+
+;; Number helpers
+
+(defn abs
+  "(abs n) is the absolute value of n.
+  if n is not a number - returns random value between 0 and max(int)"
+  [^Number n]
+  (cond
+    (not (number? n)) (abs (rand-int Integer/MAX_VALUE))
+    (neg? n) (- n)
+    :else n))
