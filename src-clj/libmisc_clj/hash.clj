@@ -1,4 +1,5 @@
 (ns libmisc-clj.hash
+  (:require [clojure.string :as s])
   (:import (libmisc_clj MurMur3)))
 
 (defn hashmap->hash64 [b]
