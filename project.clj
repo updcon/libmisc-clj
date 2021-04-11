@@ -8,7 +8,7 @@
                  [commons-io "2.8.0"]
                  [clj-time "0.15.2"]
                  [com.eaio.uuid/uuid "3.2"]
-                 [org.postgresql/postgresql "42.2.18"]]
+                 [org.postgresql/postgresql "42.2.19"]]
 
   :omit-source false
   :aot [libmisc-clj.jnio-proto])
