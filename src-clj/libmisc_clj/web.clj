@@ -63,7 +63,7 @@
 (def ->native (comp keyify-params reconstruct-vals))
 
 (defn paginated-list [alist]
-  {:total (-> alist first :total (or 0)) :items alist})
+  {:total (-> alist first :total (or (count alist))) :items alist})
 
 (defn downloaded-file
   ([name body] (downloaded-file name body nil))
