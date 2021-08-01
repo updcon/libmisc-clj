@@ -1,9 +1,11 @@
 (ns libmisc-clj.misc
   (:require [libmisc-clj.errors :as er]
-            [clojure.string :as s])
+            [clojure.string :as s]
+            [clj-time.core :as t])
   (:import (java.nio.charset Charset)
            (libmisc_clj.jnio_proto IByteBuffer)
-           (java.net InetAddress InetSocketAddress Socket URL)))
+           (java.net InetAddress InetSocketAddress Socket URL)
+           (org.joda.time LocalDate)))
 
 (defn sym->var [val]
   (-> val symbol resolve))
@@ -190,3 +192,6 @@
   [coll]
   (and (sequential? coll)
        (every? map? coll)))
+
+(defn localdate-now ^LocalDate [^String tz]
+  (LocalDate/now (t/time-zone-for-id (or tz "UTC"))))
