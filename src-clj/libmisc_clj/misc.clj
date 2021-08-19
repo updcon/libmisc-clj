@@ -11,6 +11,8 @@
   (-> val symbol resolve))
 
 (def not-nil? (complement nil?))
+(def nn? (complement number?))
+(def nz? (complement zero?))
 
 (defn in?
   "Return true if x is in coll or false otherwise"
