@@ -1,23 +1,17 @@
 = libmisc-clj
 
-A Clojure library designed to support …
+A Clojure library designed to cover low-level conversions for clojure code
 
 == Usage
 
 Add libmisc-clj dependence:
 
-image:https://img.shields.io/clojars/v/libmisc-clj.svg[Clojars Project,link=https://clojars.org/libmisc-clj]
-
-Examples:
-
-[source,clojure]
+[source, clojure]
 ----
-(map prn ["This" "is" "example"])
-
+[com.dkdhub/libmisc-clj "0.2.2"]
 ----
-
 == License
 
-CopyLeft © 2018 NoBody
+&copy; 2018-2021 Fern Flower Lab LP
 
-Distributed under the Eclipse Public License .
+Distributed under the Proprietary DKD License only.
