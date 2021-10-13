@@ -1,5 +1,6 @@
 (ns libmisc-clj.coercions
-  (:require [libmisc-clj.misc :refer [not-nil?]])
+  (:require [libmisc-clj.misc :refer [not-nil?]]
+            [libmisc-clj.func :refer [?>]])
   (:import (java.util UUID)))
 
 (defn as-bool
@@ -77,3 +78,6 @@
                 (catch IllegalArgumentException _ nil))
     UUID v
     nil))
+
+(defn bool! [v]
+  (?> v (-> v boolean? not) str as-bool boolean))

@@ -5,7 +5,8 @@
   (:import (java.nio.charset Charset)
            (libmisc_clj.jnio_proto IByteBuffer)
            (java.net InetAddress InetSocketAddress Socket URL)
-           (org.joda.time LocalDate)))
+           (org.joda.time LocalDate)
+           (java.math RoundingMode)))
 
 (defn sym->var [val]
   (-> val symbol resolve))
@@ -146,7 +147,7 @@
      (round-to-decimals 2 35.5058998M) -> 35.51"
   ^Double [^Integer decimal-place, ^Number number]
   {:pre [(integer? decimal-place) (number? number)]}
-  (double (.setScale (bigdec number) decimal-place BigDecimal/ROUND_HALF_UP)))
+  (double (.setScale (bigdec number) decimal-place RoundingMode/HALF_UP)))
 
 (def ^:private ^:const host-up-timeout
   "Timeout (in ms) for checking if a host is available with `host-up?` and `host-port-up?`."
@@ -197,3 +198,8 @@
 
 (defn localdate-now ^LocalDate [^String tz]
   (LocalDate/now (t/time-zone-for-id (or tz "UTC"))))
+
+(defn literal? [^String s]
+  (if (string? s)
+    (-> s .trim .isEmpty not)
+    false))
