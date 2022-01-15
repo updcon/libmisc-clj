@@ -1,41 +1,29 @@
-(ns libmisc-clj.digest)
+(ns libmisc-clj.digest
+  (:require [clojure.string :as s])
+  (:import (java.nio ByteBuffer)))
 
 (def alphabet59 (vec "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"))
-
-(defn- count-leading [pred s]
-  (->>
-    s
-    (map byte)
-    (take-while pred)
-    count))
-
-(defn- string->bigint [base xform s]
-  (reduce +
-          (map #(* (xform %1) %2)
-               (reverse s)
-               (iterate (partial * base) 1M))))
 
 (defn bigint->bytes [v]
   (.toByteArray (BigInteger/valueOf v)))
 
-(def ^:private divmod (juxt quot mod))
+(defn encode
+  "Encode byte array `b` into a base59 string."
+  [^bytes b]
+  (if (empty? b)
+    ""
+    (let [s (StringBuilder.)
+          zero-count (count (take-while zero? b))]
+      ;; BigInteger's signum must be 1 so that b is processed unsigned
+      (loop [i (BigInteger. 1 b)]
+        (when-not (zero? i)
+          (.append s (nth alphabet59 (mod i 59)))
+          (recur (quot i 59))))
+      (str (s/join (repeat zero-count "0")) (.reverse s)))))
 
-(defn- emitter [base value]
-  (if (pos? value)
-    (let [[d m] (divmod value base)]
-      (cons
-        (int m)
-        (lazy-seq (emitter base d))))))
-
-(defn- pipeline [from to xform map-fn drop-pred replace-ch s]
-  (->>
-    s
-    (string->bigint from xform)
-    (emitter to)
-    (map map-fn)
-    reverse
-    (concat (repeat (count-leading drop-pred s) replace-ch))
-    (apply str)))
-
-(defn b59-encode [value]
-  (pipeline 256 59 byte alphabet59 zero? (first alphabet58) value))
+(defn- char-index [c]
+  (if-let [index (s/index-of alphabet59 c)]
+    index
+    (throw (ex-info (str "Character " (pr-str c) " is not part of Base59 character set.")
+                    {:type ::illegal-character
+                     :character c}))))
