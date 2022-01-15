@@ -64,6 +64,15 @@
      (apply merge-with #(multi-merge opts %&) maps)
      (if collect? (vec maps) (last maps)))))
 
+(defn int->bytes
+  "Converts int value into a sequence of 4 bytes.
+  The zeroes are padded to the beginning in order to make
+  the BigInteger constructor working"
+  [^int value]
+  (let [pad (repeat 4 (byte 0))
+        bytes (map byte (.toByteArray (BigInteger/valueOf value)))]
+    (concat (drop (count bytes) pad) bytes)))
+
 (defn long->bytes
   "Converts long value into a sequence of 8 bytes.
   The zeroes are padded to the beginning in order to make
