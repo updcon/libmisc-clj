@@ -1,5 +1,7 @@
 package libmisc_clj;
 
+import java.util.UUID;
+
 /**
  * Murmur3 is successor to Murmur2 fast non-crytographic hash algorithms.
  *
@@ -302,6 +304,16 @@ public class MurMur3 {
      */
     public static long[] hash128(byte[] data) {
         return hash128(data, 0, data.length, DEFAULT_SEED);
+    }
+
+    /**
+     * Coverts Murmur3 128-bit variant into UUID
+     *
+     * @param h128 - input hash-128 pair of long-s
+     * @return - newly constructed derived UUID
+     */
+    public static UUID hash128asUUID(long[] h128) {
+        return new UUID(h128[0],h128[1]);
     }
 
     /**
