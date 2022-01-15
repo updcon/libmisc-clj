@@ -1,8 +1,10 @@
 (ns libmisc-clj.digest
-  (:require [clojure.string :as s])
-  (:import (java.nio ByteBuffer)))
+  (:require [clojure.string :as s]))
 
-(def alphabet59 (vec "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"))
+(def alphabetDs "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
+(def alphabetDv (vec alphabetDs))
+(def basis (count alphabetDv))
+(def basis-name (format "Base%s" basis))
 
 (defn bigint->bytes [v]
   (.toByteArray (BigInteger/valueOf v)))
@@ -17,13 +19,31 @@
       ;; BigInteger's signum must be 1 so that b is processed unsigned
       (loop [i (BigInteger. 1 b)]
         (when-not (zero? i)
-          (.append s (nth alphabet59 (mod i 59)))
-          (recur (quot i 59))))
+          (.append s (nth alphabetDv (mod i basis)))
+          (recur (quot i basis))))
       (str (s/join (repeat zero-count "0")) (.reverse s)))))
 
 (defn- char-index [c]
-  (if-let [index (s/index-of alphabet59 c)]
+  (if-let [index (s/index-of alphabetDs c)]
     index
-    (throw (ex-info (str "Character " (pr-str c) " is not part of Base59 character set.")
-                    {:type ::illegal-character
+    (throw (ex-info (str "Character " (pr-str c) " is not part of " basis-name " character set.")
+                    {:type      ::illegal-character
                      :character c}))))
+
+(defn- parse [digest]
+  (let [d (s/replace digest #"^0+" "")
+        dv (vec d)]
+    (loop [source dv
+           pairs []
+           position (count dv)]
+      (if (zero? position)
+        pairs
+        (recur (rest source) (conj pairs [position (first source)]) (dec position))))))
+
+(defn decode [^String digest]
+  (bigint->bytes
+    (reduce
+      (fn [acc [position value]]
+        (+ acc (* (char-index value) (Math/pow basis (dec position)))))
+      0
+      (parse digest))))
