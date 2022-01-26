@@ -68,7 +68,7 @@
   "Converts int value into a sequence of 4 bytes.
   The zeroes are padded to the beginning in order to make
   the BigInteger constructor working"
-  [^int value]
+  [^Integer value]
   (let [pad (repeat 4 (byte 0))
         bytes (map byte (.toByteArray (BigInteger/valueOf value)))]
     (concat (drop (count bytes) pad) bytes)))
@@ -77,7 +77,7 @@
   "Converts long value into a sequence of 8 bytes.
   The zeroes are padded to the beginning in order to make
   the BigInteger constructor working"
-  [^long value]
+  [^Long value]
   (let [pad (repeat 8 (byte 0))
         bytes (map byte (.toByteArray (BigInteger/valueOf value)))]
     (concat (drop (count bytes) pad) bytes)))
