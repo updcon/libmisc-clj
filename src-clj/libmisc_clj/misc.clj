@@ -182,14 +182,21 @@
      (catch Throwable _ false))))
 
 (defn host-port-up?
-  "Returns true if the port is active on a given host, false otherwise"
-  [^String hostname, ^Integer port]
+  "Returns true if the port is active on a given host, false otherwise.
+   Uses `InetSocketAddress` and `Socket.connect` (i.e. reliable TCP proto) under the hood.
+   The `hostname` is always treated as name to be used to determine
+   the IP address of a host. If it fails the results is also negative.
+   By default, waits 5 seconds till return, this may be configured using
+   an optional parameter `timeout` (time to wait in milliseconds)"
+  ([^String hostname ^Integer port]
+   (host-port-up? hostname port host-up-timeout))
+  ([^String hostname ^Integer port ^Integer timeout]
   (try
     (let [sock-addr (InetSocketAddress. hostname port)]
       (with-open [sock (Socket.)]
-        (.connect sock sock-addr host-up-timeout)
+        (.connect sock sock-addr timeout)
         true))
-    (catch Throwable _ false)))
+    (catch Throwable _ false))))
 
 (defn maybe?
   "Returns `true` if X is `nil`, otherwise calls (F X).
