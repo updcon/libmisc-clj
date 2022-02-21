@@ -33,3 +33,28 @@
   "Return sum of (f x) for each x in xs"
   ([f xs] (reduce + (map f xs)))
   ([xs] (reduce + xs)))
+
+(defn invert-map [m to]
+  "Turn `{k v}` into `{v k}`. Duplications will be vectorized.
+   Second parameter `to` is to get empty collection instance for vectoring"
+  (persistent!
+    (reduce (fn [m [k v]]
+              (assoc! m v (conj (get m v to) k)))
+            (transient {}) m)))
+
+(defn update-vals [m f & args]
+  "Applies function `f` to every value with optional `args`.
+   Returns new map built in constant time."
+  (persistent!
+    (reduce (fn [r [k v]]
+              (assoc! r k (apply f v args)))
+            (transient {}) m)))
+
+(defn deep-merge-with
+  "Recursively merges maps. Applies function f when sees duplicated keys"
+  [f & maps]
+  (letfn [(m [& xs]
+            (if (some #(and (map? %) (not (record? %))) xs)
+              (apply merge-with m xs)
+              (apply f xs)))]
+    (reduce m maps)))
