@@ -169,12 +169,17 @@
   5000)
 
 (defn host-up?
-  "Returns true if the host given by hostname is reachable, false otherwise "
-  [^String hostname]
-  (try
-    (let [host-addr (InetAddress/getByName hostname)]
-      (.isReachable host-addr host-up-timeout))
-    (catch Throwable _ false)))
+  "Returns true if the host given by hostname is reachable, false otherwise.
+   The `hostname` is always treated as name to be used to determine
+   the IP address of a host. If it fails the results is also negative.
+   By default, waits 5 seconds till return, this may be configured using
+   an optional parameter `timeout` (time to wait in milliseconds)"
+  ([^String hostname] (host-up? hostname host-up-timeout))
+  ([^String hostname ^Integer timeout]
+   (try
+     (let [host-addr (InetAddress/getByName hostname)]
+       (.isReachable host-addr timeout))
+     (catch Throwable _ false))))
 
 (defn host-port-up?
   "Returns true if the port is active on a given host, false otherwise"
