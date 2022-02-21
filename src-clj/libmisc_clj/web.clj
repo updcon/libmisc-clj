@@ -1,6 +1,7 @@
 (ns libmisc-clj.web
   (:require [libmisc-clj.misc :as hc]
-            [libmisc-clj.coercions :refer :all])
+            [libmisc-clj.coercions :refer :all]
+            [libmisc-clj.convert :as cnv])
   (:import (org.apache.commons.io IOUtils)
            (java.io InputStream)
            (java.net URLEncoder)))
@@ -64,6 +65,30 @@
 
 (defn paginated-list [alist]
   {:total (-> alist first :total (or (count alist))) :items alist})
+
+(def web-paginated-json
+  (comp cnv/json-response paginated-list))
+
+(def web-first-json
+  (comp cnv/json-response first))
+
+(defn paginate
+  ([items] (paginate items nil nil))
+  ([items limit offset]
+   (let [res-cnt (count items)
+         limit (if (pos-int? limit) limit res-cnt)
+         offset (if (pos-int? offset) offset 0)
+         next? (> res-cnt limit)
+         items (if next? (butlast items) items)
+         total (if (pos-int? res-cnt) (+ offset res-cnt) res-cnt)]
+     {:items    items
+      :total    total                                       ; fallback for regular pagination
+      :has_next next?
+      :limit    limit
+      :offset   offset})))
+
+(def web-coll-with-next-json
+  (comp cnv/json-response paginate))
 
 (defn downloaded-file
   ([name body] (downloaded-file name body nil))
