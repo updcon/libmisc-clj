@@ -1,49 +1,53 @@
 (ns libmisc-clj.digest
-  (:require [clojure.string :as s]))
+  (:import (clojure.lang LazySeq)))
 
 (def alphabetDs "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
-(def alphabetDv (vec alphabetDs))
+(def ^:private alphabetDv (vec alphabetDs))
 (def basis (count alphabetDv))
 (def basis-name (format "Base%s" basis))
+(def ^:private ascii 255)
 
-(defn bigint->bytes [v]
-  (.toByteArray (BigInteger/valueOf v)))
+(def ^:private alphabetInv
+  (into {}
+        (map #(vector %1 %2)
+             alphabetDv
+             (iterate inc 0))))
 
-(defn encode
-  "Encode byte array `b` into a base59 string."
-  [^bytes b]
-  (if (empty? b)
-    ""
-    (let [s (StringBuilder.)
-          zero-count (count (take-while zero? b))]
-      ;; BigInteger's signum must be 1 so that b is processed unsigned
-      (loop [i (BigInteger. 1 b)]
-        (when-not (zero? i)
-          (.append s (nth alphabetDv (mod i basis)))
-          (recur (quot i basis))))
-      (str (s/join (repeat zero-count "0")) (.reverse s)))))
+(def ^:private first-char? (partial = (byte (first alphabetDv))))
 
-(defn- char-index [c]
-  (if-let [index (s/index-of alphabetDs c)]
-    index
-    (throw (ex-info (str "Character " (pr-str c) " is not part of " basis-name " character set.")
-                    {:type      ::illegal-character
-                     :character c}))))
+(def ^:private divmod (juxt quot mod))
 
-(defn- parse [digest]
-  (let [d (s/replace digest #"^0+" "")
-        dv (vec d)]
-    (loop [source dv
-           pairs []
-           position (count dv)]
-      (if (zero? position)
-        pairs
-        (recur (rest source) (conj pairs [position (first source)]) (dec position))))))
+(defn- string->bigint [base xform s]
+  (reduce +
+          (map #(* (xform %1) %2)
+               (reverse s)
+               (iterate (partial * base) 1M))))
 
-(defn decode [^String digest]
-  (bigint->bytes
-    (reduce
-      (fn [acc [position value]]
-        (+ acc (* (char-index value) (Math/pow basis (dec position)))))
-      0
-      (parse digest))))
+(defn- count-leading [pred s]
+  (->> s (map byte) (take-while pred) count))
+
+(defn- emitter [base value]
+  (if (pos? value)
+    (let [[d m] (divmod value base)]
+      (cons
+        (int m)
+        (lazy-seq (emitter base d))))))
+
+(defn- pipeline [from to xform map-fn drop-pred replace-ch s]
+  (->>
+    s
+    (string->bigint from xform)
+    (emitter to)
+    (map map-fn)
+    reverse
+    (concat (repeat (count-leading drop-pred s) replace-ch))))
+
+(defn encode ^String [^String value]
+  (apply str (pipeline ascii basis byte alphabetDv zero? (first alphabetDv) value)))
+
+(defn decode ^LazySeq [^String value]
+  (->>
+    (drop-while first-char? value)
+    (pipeline basis ascii alphabetInv char first-char? "\000")))
+
+(defn num->bytes [n] (.toByteArray (biginteger n)))
