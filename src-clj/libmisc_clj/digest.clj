@@ -1,11 +1,11 @@
 (ns libmisc-clj.digest
   (:import (clojure.lang LazySeq)))
 
-(def alphabetDs "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
+(def alphabetDs "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz") ;; i.e. b59
 (def ^:private alphabetDv (vec alphabetDs))
 (def basis (count alphabetDv))
 (def basis-name (format "Base%s" basis))
-(def ^:private ascii 255)
+(def ^:private ascii 256)
 
 (def ^:private alphabetInv
   (into {}
