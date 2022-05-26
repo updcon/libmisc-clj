@@ -1,7 +1,6 @@
 (ns libmisc-clj.digest
   (:require [clojure.string :as s])
-  (:import (java.nio ByteBuffer)
-           (java.util UUID)))
+  (:import (java.util UUID)))
 
 (def alphabetDs "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz") ;; i.e. b59 & '= as a signum for negatives
 (def ^:private alphabetDv (vec alphabetDs))
@@ -43,10 +42,12 @@
 (def ^:private c-index (memoize char-index))
 (defn- basis-c [n] (nth alphabetDv n))
 (def ^:private c-value (memoize basis-c))
+
 ;; ---
 
 (defn encode
-  "Encode byte array `b` into a base59 string."
+  "Encode Long (BigInteger) number `n` into a base59 string.
+   Negative values are signed by a single leading '=' symbol."
   ^String [^Long n]
   (let [[negative? value] (if (neg? n) [true (- n)] [false n])
         b (-> value num->bytes byte-array)
@@ -70,6 +71,7 @@
         (recur (rest source) (conj pairs [position (first source)]) (dec position))))))
 
 (defn decode ^Long [^String digest]
+  "Decode base59 string `digest` into the appropriate Long (BigInteger) number."
   (let [negative? (s/starts-with? digest "=")
         body (if negative? (s/replace-first digest "=" "") digest)
         value (biginteger
@@ -81,6 +83,8 @@
     (if negative? (- value) value)))
 
 (defn encode-uuid ^String [^UUID id]
+  "Encode native UUID value `id` into a base59 string.
+   Returns twin of digests delimited by single '-' symbol"
   (if (uuid? id)
     (str (encode (.getMostSignificantBits id))
          "-"
@@ -90,6 +94,8 @@
                      :id   id}))))
 
 (defn decode-uuid ^UUID [^String id]
+  "Decode base59 encoded string into appropriate native UUID value.
+   Requires input value to be as twin of digests delimited by single '-' symbol"
   (if (re-matches #"=?\w+-=?\w+" id)
     (let [[msp lsp] (s/split id #"-")]
       (UUID. (decode msp) (decode lsp)))
