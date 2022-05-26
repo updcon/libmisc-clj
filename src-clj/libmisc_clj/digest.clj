@@ -8,7 +8,7 @@
 (def basis (count alphabetDv))
 (def basis-name (format "Base%s" basis))
 
-(defn- num->signed-bytes [num, size]
+(defn num->signed-bytes [num, size]
   (let [byte-array (-> (str num) (BigInteger.) .toByteArray)]
     (let [pad-byte (if (neg? num) (byte -1) (byte 0))]
       (apply vector (concat
@@ -40,7 +40,9 @@
                     {:type      ::illegal-character
                      :character c}))))
 
-(def ^:private divmod (juxt quot mod))
+(def ^:private c-index (memoize char-index))
+(defn- basis-c [n] (nth alphabetDv n))
+(def ^:private c-value (memoize basis-c))
 ;; ---
 
 (defn encode
@@ -53,7 +55,7 @@
     ;; BigInteger's signum must be 1 so that b is processed unsigned
     (loop [i (BigInteger. 1 b)]
       (when-not (zero? i)
-        (.append s (nth alphabetDv (mod i basis)))
+        (.append s (c-value (mod i basis)))
         (recur (quot i basis))))
     (str (when negative? "=") (s/join (repeat zero-count "0")) (.reverse s))))
 
@@ -73,13 +75,12 @@
         value (biginteger
                 (reduce
                   (fn [acc [position value]]
-                    (+ acc (* (char-index value) (biginteger (.pow (biginteger basis) (dec position))))))
+                    (+ acc (* (c-index value) (biginteger (.pow (biginteger basis) (dec position))))))
                   (biginteger 0)                            ;; start value to be the same with resulting
                   (parse body)))]
     (if negative? (- value) value)))
 
 (defn encode-uuid ^String [^UUID id]
-  (prn (.getMostSignificantBits id) "-" (.getLeastSignificantBits id))
   (if (uuid? id)
     (str (encode (.getMostSignificantBits id))
          "-"
