@@ -15,24 +15,41 @@
   ([^long gregorian]
    (- (quot gregorian 10000) 12219292800000)))
 
+(defn uuid-v1->timestamp ^long [^UUID x]
+  (some-> x get-timestamp posix-time long))
+
 (defn get-instant [^UUID uuid]
-  (when-let [ts (get-timestamp uuid)]
-    (Date. (long (posix-time ts)))))
+  (some-> uuid uuid-v1->timestamp Date.))
+
+(defn- unformat*
+  ([td fmt & [local]]
+  (when td
+     ((if local tf/unparse-local tf/unparse)
+      (tf/formatter fmt)
+      (if local td (tc/from-date td))))))
 
 (defn uuid-v1->isotime [^UUID x]
-  (tf/unparse (tf/formatter :date-time)
-              (tc/from-date (get-instant x))))
+  (unformat* (get-instant x) :date-time))
+
+(defn uuid-v1->isodate [^UUID x]
+  (unformat* (get-instant x) :date))
+
+(defn- uuid-v1->iso-tz* [^UUID x ^String tz]
+  (some-> x
+          get-instant
+          tc/from-date
+          (t/to-time-zone (t/time-zone-for-id (or tz "UTC")))
+          tc/to-local-date-time))
 
 (defn uuid-v1->isotime-tz ^LocalDate [^UUID x ^String tz]
-  (-> x
-      get-instant
-      tc/from-date
-      (t/to-time-zone (t/time-zone-for-id (or tz "UTC")))
-      tc/to-local-date))
+  (some-> x
+          (uuid-v1->iso-tz* tz)
+          (unformat* :date-time true)))
 
-(defn uuid-v1->timestamp [^UUID x]
-  (tc/to-long (long (/ (- (.timestamp x) 0x01b21dd213814000)
-                       10000))))
+(defn uuid-v1->isodate-tz ^LocalDate [^UUID x ^String tz]
+  (some-> x
+          (uuid-v1->iso-tz* tz)
+          (unformat* :date true)))
 
 (defn uuid-delta
   "returns diff between two uuid/v1 serails in ms"
