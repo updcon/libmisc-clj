@@ -4,11 +4,11 @@
   :license {:name "Proprietary"
             :url  "https://dkdhub.com/licenses/base.html"}
 
-  :dependencies [[cheshire "5.10.2"]
+  :dependencies [[cheshire "5.11.0"]
                  [commons-io "2.11.0"]
                  [clj-time "0.15.2"]
                  [com.eaio.uuid/uuid "3.2"]
-                 [org.postgresql/postgresql "42.3.6"]]
+                 [org.postgresql/postgresql "42.5.0"]]
 
   :omit-source false
   :aot [libmisc-clj.jnio-proto])
