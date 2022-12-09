@@ -26,7 +26,7 @@
   (let [^String msg (apply format (str fmt) args)]
     (throw (IllegalMonitorStateException. msg))))
 
-(defn not-authorized! [fmt id & args]
+(defn not-authorized! [fmt & args]
   (let [^String msg (apply format (str fmt) args)]
     (throw (NoSuchMechanismException. msg))))
 
