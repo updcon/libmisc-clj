@@ -2,6 +2,7 @@
   (:require [libmisc-clj.convert :as cnv]
             [libmisc-clj.vars-http :as vh])
   (:import (java.util NoSuchElementException)
+           (javax.xml.crypto NoSuchMechanismException)
            (org.postgresql.util PSQLException)
            (javax.naming LimitExceededException)
            (clojure.lang ExceptionInfo)
@@ -12,6 +13,22 @@
   `(cnv/json-response {:error ~msg
                        :trace (when ~T (.getLocalizedMessage ~T))}
                       ~code))
+
+(defn illegal-argument! [fmt & args]
+  (let [^String msg (apply format (str fmt) args)]
+    (throw (IllegalArgumentException. msg))))
+
+(defn illegal-state! [fmt & args]
+  (let [^String msg (apply format (str fmt) args)]
+    (throw (IllegalStateException. msg))))
+
+(defn access-denied! [fmt & args]
+  (let [^String msg (apply format (str fmt) args)]
+    (throw (IllegalMonitorStateException. msg))))
+
+(defn not-authorized! [fmt id & args]
+  (let [^String msg (apply format (str fmt) args)]
+    (throw (NoSuchMechanismException. msg))))
 
 (defn wrap-exceptions
   [handler]
@@ -26,6 +43,10 @@
             (pack-error->json "Not found" nfe 404))
           (catch IllegalStateException ise
             (pack-error->json "Illegal state" ise 409))
+          (catch IllegalMonitorStateException ims
+            (pack-error->json "Forbidden" ims 403))
+          (catch NoSuchMechanismException nsme
+            (pack-error->json "Not Authorized" nsme 401))
           (catch PSQLException pge
             (pack-error->json "Meta DB Error" pge 400))))))
 
