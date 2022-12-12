@@ -8,7 +8,7 @@ Add libmisc-clj dependence:
 
 [source, clojure]
 ----
-[com.dkdhub/libmisc-clj "0.3.0"]
+[com.dkdhub/libmisc-clj "1.0.0"]
 ----
 == License
 
