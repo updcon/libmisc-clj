@@ -1,8 +1,7 @@
 (defproject com.dkdhub/libmisc-clj "0.3.0"
-  :description "DKD Core Engine lib of miscellaneous"
+  :description "DKD/DKDHUB - the Clojure lib of miscellaneous"
   :url "http://dkdhub.com"
-  :license {:name "Proprietary"
-            :url  "https://dkdhub.com/licenses/base.html"}
+  :license {:name "MIT"}
 
   :dependencies [[cheshire "5.11.0"]
                  [commons-io "2.11.0"]
@@ -12,7 +11,3 @@
 
   :omit-source false
   :aot [libmisc-clj.jnio-proto])
-
-(cemerick.pomegranate.aether/register-wagon-factory!
-  "scp" #(let [c (resolve 'org.apache.maven.wagon.providers.ssh.external.ScpExternalWagon)]
-           (clojure.lang.Reflector/invokeConstructor c (into-array []))))
