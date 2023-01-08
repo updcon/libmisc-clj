@@ -1,6 +1,6 @@
-(defproject com.dkdhub/libmisc-clj "1.0.0"
+(defproject com.dkdhub/libmisc-clj "1.0.1"
   :description "DKD/DKDHUB - the Clojure lib of miscellaneous"
-  :url "http://dkdhub.com"
+  :url "https://github.com/updcon/libmisc-clj"
   :license {:name "MIT"}
 
   :dependencies [[metosin/jsonista "0.3.7"]
