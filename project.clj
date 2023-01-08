@@ -1,4 +1,4 @@
-(defproject com.dkdhub/libmisc-clj "1.0.1"
+(defproject com.dkdhub/libmisc-clj "1.0.2"
   :description "DKD/DKDHUB - the Clojure lib of miscellaneous"
   :url "https://github.com/updcon/libmisc-clj"
   :license {:name "MIT"}
