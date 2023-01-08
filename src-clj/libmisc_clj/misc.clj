@@ -191,12 +191,12 @@
   ([^String hostname ^Integer port]
    (host-port-up? hostname port host-up-timeout))
   ([^String hostname ^Integer port ^Integer timeout]
-  (try
-    (let [sock-addr (InetSocketAddress. hostname port)]
-      (with-open [sock (Socket.)]
-        (.connect sock sock-addr timeout)
-        true))
-    (catch Throwable _ false))))
+   (try
+     (let [sock-addr (InetSocketAddress. hostname port)]
+       (with-open [sock (Socket.)]
+         (.connect sock sock-addr timeout)
+         true))
+     (catch Throwable _ false))))
 
 (defn maybe?
   "Returns `true` if X is `nil`, otherwise calls (F X).
@@ -231,9 +231,17 @@
     (-> s .trim .isEmpty not)
     false))
 
-(defmacro ^:private when-let*
+(defmacro when-let*
+  "The extended version of when-let what allows multiple bindings"
   ([bindings & body]
    (if (seq bindings)
      `(when-let [~(first bindings) ~(second bindings)]
         (when-let* ~(drop 2 bindings) ~@body))
      `(do ~@body))))
+
+(defmacro def-
+  "Yields a private definitions as 'def the same way as defn- does"
+  [name & body]
+  (list* `def (with-meta name
+                         (assoc (meta name) :private true))
+         body))
