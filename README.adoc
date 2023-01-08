@@ -8,13 +8,13 @@ Add libmisc-clj dependence:
 
 [source, clojure]
 ----
-[com.dkdhub/libmisc-clj "1.0.0"]
+[com.dkdhub/libmisc-clj "1.0.1"]
 ----
 == License
 
 CopyRights:
 
- © 2018-2022 UPD Consulting
- © 2018-2022 Fern Flower Lab
+ © 2018-2023 UPD Consulting
+ © 2018-2023 Fern Flower Lab
 
 Starting from early 2022 distributed under the MIT license.
