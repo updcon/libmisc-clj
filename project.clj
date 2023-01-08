@@ -3,7 +3,7 @@
   :url "http://dkdhub.com"
   :license {:name "MIT"}
 
-  :dependencies [[cheshire "5.11.0"]
+  :dependencies [[metosin/jsonista "0.3.7"]
                  [commons-io "2.11.0"]
                  [clj-time "0.15.2"]
                  [com.eaio.uuid/uuid "3.2"]
