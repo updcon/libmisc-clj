@@ -157,6 +157,10 @@
   "Increment N if it is non-`nil`, otherwise return `1` (e.g. as if incrementing `0`)."
   (fnil inc 0))
 
+(def ^{:arglists '([n])} safe-dec
+  "Decrement N if it is non-`nil`, otherwise return `-1` (e.g. as if decrementing `0`)."
+  (fnil dec 0))
+
 (defn round-to-decimals
   "Round (presumabily floating-point) NUMBER to DECIMAL-PLACE. Returns a `Double`.
      (round-to-decimals 2 35.5058998M) -> 35.51"
